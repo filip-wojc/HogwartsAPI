@@ -1,0 +1,6 @@
+@HogwartsAPI_HostAddress = http://localhost:5052
+
+GET {{HogwartsAPI_HostAddress}}/hogwarts/
+Accept: application/json
+
+###
