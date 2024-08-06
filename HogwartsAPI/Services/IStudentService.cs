@@ -7,5 +7,6 @@ namespace HogwartsAPI.Services
         Task<IEnumerable<StudentsDto>> GetAll();
         Task<StudentsDto> GetById(int id);
         Task<int> Create(CreateStudentDto dto);
+        Task Delete(int id);
     }
 }

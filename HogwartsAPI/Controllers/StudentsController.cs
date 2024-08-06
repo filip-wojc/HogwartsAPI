@@ -37,5 +37,12 @@ namespace HogwartsAPI.Controllers
             int studentId = await _service.Create(dto);
             return Created($"/api/student/{studentId}", null);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete([FromRoute] int id)
+        {
+            await _service.Delete(id);
+            return NoContent();
+        }
     }
 }

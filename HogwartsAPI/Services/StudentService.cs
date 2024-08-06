@@ -27,15 +27,7 @@ namespace HogwartsAPI.Services
 
         public async Task<StudentsDto> GetById(int id)
         {
-            var student = await _context.Students.Include(s => s.House)
-                .Include(s => s.Pets).Include(s => s.Courses).
-                 Include(s => s.Wand).ThenInclude(w => w.Core)
-                .FirstOrDefaultAsync(s => s.Id == id);
-            if (student is null)
-            {
-                throw new NotFoundException("Student not found");
-            }
-
+            var student = await GetStudentById(id);
             return _mapper.Map<StudentsDto>(student);
         }
 
@@ -46,6 +38,27 @@ namespace HogwartsAPI.Services
             await _context.SaveChangesAsync();
 
             return student.Id;
+        }
+
+        public async Task Delete(int id)
+        {
+            var student = await GetStudentById(id);
+            _context.Remove(student);
+            await _context.SaveChangesAsync();
+        }
+
+        private async Task<Student> GetStudentById(int id)
+        {
+            var student = await _context.Students.Include(s => s.House)
+               .Include(s => s.Pets).Include(s => s.Courses).
+                Include(s => s.Wand).ThenInclude(w => w.Core)
+               .FirstOrDefaultAsync(s => s.Id == id);
+            if (student is null)
+            {
+                throw new NotFoundException("Student not found");
+            }
+
+            return student;
         }
     }
 }
