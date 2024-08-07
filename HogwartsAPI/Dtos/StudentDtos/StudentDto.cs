@@ -2,7 +2,7 @@
 
 namespace HogwartsAPI.Dtos.StudentDtos
 {
-    public class StudentsDto
+    public class StudentDto
     {
         public string? Name { get; set; }
         public string? Surname { get; set; }

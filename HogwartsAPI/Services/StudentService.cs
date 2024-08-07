@@ -2,11 +2,12 @@
 using HogwartsAPI.Dtos.StudentDtos;
 using HogwartsAPI.Entities;
 using HogwartsAPI.Exceptions;
+using HogwartsAPI.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace HogwartsAPI.Services
 {
-    public class StudentService : IStudentService
+    public class StudentService : IGetEntitiesService<StudentDto>, IAddEntitiesService<CreateStudentDto>, IDeleteEntitiesService
     {
         private readonly HogwartDbContext _context;
         private readonly IMapper _mapper;
@@ -16,19 +17,19 @@ namespace HogwartsAPI.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<StudentsDto>> GetAll()
+        public async Task<IEnumerable<StudentDto>> GetAll()
         {
             var students = await _context.Students.Include(s => s.House)
                .Include(s => s.Pets).Include(s => s.Courses).
                Include(s => s.Wand).ThenInclude(w => w.Core).ToListAsync();
 
-            return _mapper.Map<List<StudentsDto>>(students);
+            return _mapper.Map<List<StudentDto>>(students);
         }
 
-        public async Task<StudentsDto> GetById(int id)
+        public async Task<StudentDto> GetById(int id)
         {
             var student = await GetStudentById(id);
-            return _mapper.Map<StudentsDto>(student);
+            return _mapper.Map<StudentDto>(student);
         }
 
         public async Task<int> Create(CreateStudentDto dto)

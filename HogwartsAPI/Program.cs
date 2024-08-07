@@ -1,10 +1,13 @@
 using AutoMapper;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using HogwartsAPI.Entities;
+using HogwartsAPI.Interfaces;
 using HogwartsAPI.Middlewares;
 using HogwartsAPI.Services;
 using HogwartsAPI.Tools;
 using Microsoft.EntityFrameworkCore;
+using NLog.Web;
 using System.Text.Json.Serialization;
 
 namespace HogwartsAPI
@@ -17,21 +20,33 @@ namespace HogwartsAPI
 
             // Add services to the container.
 
-            builder.Services.AddControllers().AddFluentValidation(o =>
+            var modules = new List<IModule>
             {
-                o.RegisterValidatorsFromAssemblyContaining<Program>();
-            })
+                new StudentModule(),
+                new WandModule()
+            };
+
+            foreach (var module in modules)
+            {
+                module.RegisterServices(builder.Services);
+            }
+
+            builder.Services.AddControllers()
             .AddJsonOptions(o =>
             {
                 o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                 o.JsonSerializerOptions.WriteIndented = true;
             });
+
+            builder.Host.UseNLog();
+
+            builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
+            builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
             builder.Services.AddDbContext<HogwartDbContext>(o =>
                 o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
             );
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
-            builder.Services.AddScoped<IStudentService, StudentService>();
 
             builder.Services.AddScoped<ErrorHandlingMiddleware>();
 
