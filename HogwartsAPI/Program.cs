@@ -2,9 +2,8 @@ using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using HogwartsAPI.Entities;
+using HogwartsAPI.Exceptions;
 using HogwartsAPI.Interfaces;
-using HogwartsAPI.Middlewares;
-using HogwartsAPI.Services;
 using HogwartsAPI.Tools;
 using Microsoft.EntityFrameworkCore;
 using NLog.Web;
@@ -48,13 +47,14 @@ namespace HogwartsAPI
             );
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            builder.Services.AddScoped<ErrorHandlingMiddleware>();
+            builder.Services.AddExceptionHandler<AppExceptionHandler>();
+            builder.Services.AddExceptionHandler<GeneralExceptionHandler>();
 
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
 
-            app.UseMiddleware<ErrorHandlingMiddleware>();
+            app.UseExceptionHandler(_ => { });
             // Configure the HTTP request pipeline.
 
             app.UseHttpsRedirection();
