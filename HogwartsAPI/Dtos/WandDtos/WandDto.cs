@@ -7,6 +7,6 @@
         public string? WoodType { get; set; }
         public string? Color { get; set; }
         public string? CoreName { get; set; }
-
+        public bool hasOwner { get; set; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace HogwartsAPI.Interfaces
 {
-    public interface IDeleteEntitiesService
+    public interface IDeleteEntitiesService<T> where T : class
     {
         Task Delete(int id);
     }

@@ -17,12 +17,22 @@ namespace HogwartsAPI.Middlewares
                 await next.Invoke(context);
             }
 
-            catch(NotFoundException ex)
+            catch (NotFoundException ex)
             {
                 context.Response.StatusCode = 404;
                 await context.Response.WriteAsync(ex.Message);
             }
-            catch(Exception ex)
+            catch (BadHttpRequestException ex)
+            {
+                context.Response.StatusCode = 400;
+                await context.Response.WriteAsync(ex.Message);
+            }
+            catch(ForbidException ex)
+            {
+                context.Response.StatusCode = 403;
+                await context.Response.WriteAsync(ex.Message);
+            }
+            catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
 

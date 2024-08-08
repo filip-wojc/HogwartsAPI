@@ -1,4 +1,5 @@
 ﻿using HogwartsAPI.Dtos.WandDtos;
+using HogwartsAPI.Entities;
 using HogwartsAPI.Interfaces;
 using HogwartsAPI.Services;
 
@@ -10,7 +11,8 @@ namespace HogwartsAPI.Tools
         {
             services.AddScoped<IGetEntitiesService<WandDto>, WandService>();
             services.AddScoped<IAddEntitiesService<CreateWandDto>, WandService>();
-            services.AddScoped<IDeleteEntitiesService, WandService>();
+            services.AddScoped<IDeleteEntitiesService<Wand>, WandService>();
+            services.AddScoped<IModifyEntitiesService<ModifyWandDto>, WandService>();
         }
     }
 }

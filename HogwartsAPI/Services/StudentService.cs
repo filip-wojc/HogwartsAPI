@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HogwartsAPI.Services
 {
-    public class StudentService : IGetEntitiesService<StudentDto>, IAddEntitiesService<CreateStudentDto>, IDeleteEntitiesService
+    public class StudentService : IGetEntitiesService<StudentDto>, IAddEntitiesService<CreateStudentDto>, IDeleteEntitiesService<Student>, IModifyEntitiesService<ModifyStudentDto>
     {
         private readonly HogwartDbContext _context;
         private readonly IMapper _mapper;
@@ -44,7 +44,25 @@ namespace HogwartsAPI.Services
         public async Task Delete(int id)
         {
             var student = await GetStudentById(id);
-            _context.Remove(student);
+            await _context.Students.Where(s => s.Id == id).ExecuteDeleteAsync();
+        }
+
+        public async Task Modify(int id, ModifyStudentDto dto)
+        {
+            if (!(dto.WandId.HasValue || dto.SchoolYear.HasValue))
+            {
+                throw new BadHttpRequestException("You passed no data");
+            }
+            var student = await GetStudentById(id);
+            if(dto.SchoolYear.HasValue)
+            {
+                student.SchoolYear = dto.SchoolYear.Value;
+            }
+            if(dto.WandId.HasValue)
+            {
+                student.WandId = dto.WandId.Value;
+            }
+          
             await _context.SaveChangesAsync();
         }
 
@@ -61,5 +79,7 @@ namespace HogwartsAPI.Services
 
             return student;
         }
+
+       
     }
 }

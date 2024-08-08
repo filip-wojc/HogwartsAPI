@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HogwartsAPI.Services
 {
-    public class WandService : IGetEntitiesService<WandDto>, IAddEntitiesService<CreateWandDto>, IDeleteEntitiesService
+    public class WandService : IGetEntitiesService<WandDto>, IAddEntitiesService<CreateWandDto>, IDeleteEntitiesService<Wand>, IModifyEntitiesService<ModifyWandDto>
     {
         private readonly HogwartDbContext _context;
         private readonly IMapper _mapper;
@@ -18,7 +18,7 @@ namespace HogwartsAPI.Services
         }
         public async Task<IEnumerable<WandDto>> GetAll()
         {
-            var wands = await _context.Wands.Include(w => w.Core).ToListAsync();
+            var wands = await _context.Wands.Include(w => w.Core).Include(w => w.Core).Include(w => w.StudentOwners).Include(w => w.TeacherOwners).ToListAsync();
             return _mapper.Map<List<WandDto>>(wands);
         }
 
@@ -37,14 +37,24 @@ namespace HogwartsAPI.Services
 
         public async Task Delete(int id)
         {
-            var wand = GetWandById(id);
-            _context.Remove(wand);
+            var wand = await GetWandById(id);
+            if (wand.TeacherOwners.Any() || wand.StudentOwners.Any())
+            {
+                throw new ForbidException("This wand has an owner");
+            }
+            await _context.Wands.Where(w => w.Id == id).ExecuteDeleteAsync();
+        }
+
+        public async Task Modify(int id, ModifyWandDto dto)
+        {
+            var wand = await GetWandById(id);
+            wand.Price = dto.Price;
             await _context.SaveChangesAsync();
         }
-        
+
         private async Task<Wand> GetWandById(int id)
         {
-            var wand = await _context.Wands.Include(w => w.Core).FirstOrDefaultAsync(w => w.Id == id);
+            var wand = await _context.Wands.Include(w => w.Core).Include(w => w.StudentOwners).Include(w => w.TeacherOwners).FirstOrDefaultAsync(w => w.Id == id);
             if (wand is null)
             {
                 throw new NotFoundException("Wand not found");

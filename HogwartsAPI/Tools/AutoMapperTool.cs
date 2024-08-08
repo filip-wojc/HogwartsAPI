@@ -17,7 +17,8 @@ namespace HogwartsAPI.Tools
             CreateMap<CreateStudentDto, Student>();
 
             CreateMap<Wand, WandDto>()
-                .ForMember(dest => dest.CoreName, o => o.MapFrom(src => src.Core.Name));
+                .ForMember(dest => dest.CoreName, o => o.MapFrom(src => src.Core.Name))
+                .ForMember(dest => dest.hasOwner, o => o.MapFrom(src => src.StudentOwners.Any() || src.TeacherOwners.Any()));
 
             CreateMap<CreateWandDto, Wand>();
         }

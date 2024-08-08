@@ -5,6 +5,7 @@ using HogwartsAPI.Interfaces;
 using HogwartsAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace HogwartsAPI.Controllers
 {
@@ -14,12 +15,14 @@ namespace HogwartsAPI.Controllers
     {
         private readonly IGetEntitiesService<StudentDto> _getService;
         private readonly IAddEntitiesService<CreateStudentDto> _addService;
-        private readonly IDeleteEntitiesService _deleteService;
-        public StudentsController(IGetEntitiesService<StudentDto> getService, IAddEntitiesService<CreateStudentDto> addService, IDeleteEntitiesService deleteService)
+        private readonly IDeleteEntitiesService<Student> _deleteService;
+        private readonly IModifyEntitiesService<ModifyStudentDto> _modifyService;
+        public StudentsController(IGetEntitiesService<StudentDto> getService, IAddEntitiesService<CreateStudentDto> addService, IDeleteEntitiesService<Student> deleteService, IModifyEntitiesService<ModifyStudentDto> modifyService)
         {
             _getService = getService;
             _addService = addService;
             _deleteService = deleteService;
+            _modifyService = modifyService;
         }
 
         [HttpGet]
@@ -48,6 +51,13 @@ namespace HogwartsAPI.Controllers
         {
             await _deleteService.Delete(id);
             return NoContent();
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Modify([FromRoute] int id, [FromBody] ModifyStudentDto dto)
+        {
+            await _modifyService.Modify(id, dto);
+            return Ok();
         }
     }
 }
