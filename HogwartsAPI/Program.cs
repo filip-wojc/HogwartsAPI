@@ -5,6 +5,7 @@ using HogwartsAPI.Entities;
 using HogwartsAPI.Exceptions;
 using HogwartsAPI.Interfaces;
 using HogwartsAPI.Tools;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NLog.Web;
 using System.Text.Json.Serialization;
@@ -22,7 +23,9 @@ namespace HogwartsAPI
             var modules = new List<IModule>
             {
                 new StudentModule(),
-                new WandModule()
+                new WandModule(),
+                new CourseModule(),
+                new UserModule()
             };
 
             foreach (var module in modules)
@@ -38,6 +41,8 @@ namespace HogwartsAPI
             });
 
             builder.Host.UseNLog();
+
+            builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
             builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
             builder.Services.AddValidatorsFromAssemblyContaining<Program>();

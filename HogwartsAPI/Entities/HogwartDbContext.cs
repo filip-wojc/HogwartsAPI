@@ -18,9 +18,15 @@ namespace HogwartsAPI.Entities
         public DbSet<Pet> Pets { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<House> Houses { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Role> Roles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<User>()
+                .Property(u => u.Email).IsRequired();
+            modelBuilder.Entity<User>()
+                .Property(u => u.Username).IsRequired();
 
             modelBuilder.Entity<Student>()
             .HasOne(s => s.House)
@@ -124,6 +130,12 @@ namespace HogwartsAPI.Entities
                 new Course { Id = 3, Name = "Spells", Description = "Learn how to cast advanced speels.", DifficultyLevel = 2, Date = new DateTime(2024, 8, 6), TeacherId = 5 },
                 new Course { Id = 4, Name = "Herbology", Description = "Learn how to take care of plants.", DifficultyLevel = 3, Date = new DateTime(2024, 8, 7), TeacherId = 4 }
             );
+
+            modelBuilder.Entity<Role>().HasData(
+                    new Role { Id = 1, Name = "User"},
+                    new Role { Id = 2, Name = "Manager"},
+                    new Role { Id = 3, Name = "Admin"}
+                );
 
         }
     }

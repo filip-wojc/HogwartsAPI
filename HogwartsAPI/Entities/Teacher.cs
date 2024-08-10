@@ -9,5 +9,7 @@
         public virtual Wand? Wand { get; set; }
         public int WandId { get; set; }
         public virtual Course? Course { get; set; }
+
+        public virtual House? House { get; set; }
     }
 }

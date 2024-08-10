@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
+using HogwartsAPI.Dtos;
 using HogwartsAPI.Dtos.StudentDtos;
+using HogwartsAPI.Dtos.UserDtos;
 using HogwartsAPI.Dtos.WandDtos;
 using HogwartsAPI.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace HogwartsAPI.Tools
 {
@@ -21,6 +24,10 @@ namespace HogwartsAPI.Tools
                 .ForMember(dest => dest.hasOwner, o => o.MapFrom(src => src.StudentOwners.Any() || src.TeacherOwners.Any()));
 
             CreateMap<CreateWandDto, Wand>();
+
+            CreateMap<Course, CourseDto>()
+                .ForMember(dest => dest.TeacherName, o => o.MapFrom(src => $"{src.Teacher.Name} {src.Teacher.Surname}"))
+                .ForMember(dest => dest.StudentsNames, o => o.MapFrom(src => src.Students.Select(s => $"{s.Name} {s.Surname}")));
         }
     }
 }
