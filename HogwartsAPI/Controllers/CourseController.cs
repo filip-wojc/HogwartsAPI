@@ -27,5 +27,8 @@ namespace HogwartsAPI.Controllers
             var course = await _getService.GetById(courseId);
             return Ok(course);
         }
+
+        // TO DO
+        // Pozostale metody kontrolera
     }
 }

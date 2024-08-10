@@ -15,7 +15,8 @@ namespace HogwartsAPI.Exceptions
             (int statusCode, string message) = exception switch
             {
                 ForbidException ex => (403, ex.Message),
-                NotFoundException ex => (400, ex.Message),
+                NotFoundException ex => (404, ex.Message),
+                BadHttpRequestException ex => (400, ex.Message),
                 _ => default
             };
 

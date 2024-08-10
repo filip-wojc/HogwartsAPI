@@ -7,7 +7,9 @@ using HogwartsAPI.Interfaces;
 using HogwartsAPI.Tools;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using NLog.Web;
+using System.Text;
 using System.Text.Json.Serialization;
 
 namespace HogwartsAPI
@@ -44,6 +46,27 @@ namespace HogwartsAPI
 
             builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
+
+            var authParameters = new JwtParameters();
+            builder.Configuration.GetSection("Authentication").Bind(authParameters);
+            builder.Services.AddSingleton(authParameters);
+            builder.Services.AddAuthentication(o =>
+            {
+                o.DefaultAuthenticateScheme = "Bearer";
+                o.DefaultScheme = "Bearer";
+                o.DefaultChallengeScheme = "Bearer";
+            }).AddJwtBearer(cfg =>
+            {
+                cfg.RequireHttpsMetadata = false;
+                cfg.SaveToken = true;
+                cfg.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = authParameters.JwtIssuer,
+                    ValidAudience = authParameters.JwtIssuer,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authParameters.JwtKey)),
+                };
+            });
+
             builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
             builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
@@ -61,6 +84,8 @@ namespace HogwartsAPI
 
             app.UseExceptionHandler(_ => { });
             // Configure the HTTP request pipeline.
+
+            app.UseAuthentication();
 
             app.UseHttpsRedirection();
 

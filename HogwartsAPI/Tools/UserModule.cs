@@ -9,6 +9,7 @@ namespace HogwartsAPI.Tools
         public void RegisterServices(IServiceCollection services)
         {
             services.AddScoped<IAddEntitiesService<RegisterUserDto>, AccountService>();
+            services.AddScoped<ILoginService, AccountService>();
         }
     }
 }
