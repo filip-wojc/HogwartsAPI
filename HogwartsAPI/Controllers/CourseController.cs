@@ -1,11 +1,13 @@
 ﻿using HogwartsAPI.Dtos;
 using HogwartsAPI.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HogwartsAPI.Controllers
 {
     [ApiController]
     [Route("api/course")]
+    [Authorize]
     public class CourseController : ControllerBase
     {
         private readonly IGetEntitiesService<CourseDto> _getService;

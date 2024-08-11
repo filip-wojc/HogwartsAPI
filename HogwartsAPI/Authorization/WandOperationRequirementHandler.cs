@@ -22,6 +22,9 @@ namespace HogwartsAPI.Authorization
             }
 
             return Task.CompletedTask;
+
+            // To Samo dla innych encji
+            // Zmiana w serwisach
         }
     }
 }

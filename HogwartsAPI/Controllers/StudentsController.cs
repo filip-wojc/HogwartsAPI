@@ -28,7 +28,6 @@ namespace HogwartsAPI.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "AtLeast15")]
         public async Task<ActionResult<IEnumerable<StudentDto>>> GetAll()
         {
             var students = await _getService.GetAll();
