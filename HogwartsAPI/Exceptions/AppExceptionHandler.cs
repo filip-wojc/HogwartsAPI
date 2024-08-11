@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.Extensions.Logging;
 using System.Collections.Specialized;
+using System.Net.WebSockets;
+using System.Security.Claims;
 
 namespace HogwartsAPI.Exceptions
 {

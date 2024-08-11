@@ -10,5 +10,7 @@
         public virtual IEnumerable<Student>? Students { get; set; }
         public Teacher? Teacher { get; set; }
         public int TeacherId { get; set; }
+        public User? CreatedBy { get; set; }
+        public int? CreatedById { get; set; }
     }
 }

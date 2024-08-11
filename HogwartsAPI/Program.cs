@@ -1,6 +1,7 @@
 using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using HogwartsAPI.Authorization;
 using HogwartsAPI.Entities;
 using HogwartsAPI.Exceptions;
 using HogwartsAPI.Interfaces;
@@ -67,6 +68,9 @@ namespace HogwartsAPI
                 };
             });
 
+            var authPolicies = new AuthorizationPolicyHandler();
+            authPolicies.AddAuthorizationPolicy(builder.Services);
+
             builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
             builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
@@ -77,7 +81,7 @@ namespace HogwartsAPI
 
             builder.Services.AddExceptionHandler<AppExceptionHandler>();
             builder.Services.AddExceptionHandler<GeneralExceptionHandler>();
-
+            builder.Services.AddHttpContextAccessor();
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();

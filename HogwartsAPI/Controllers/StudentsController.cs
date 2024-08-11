@@ -3,6 +3,7 @@ using HogwartsAPI.Dtos.StudentDtos;
 using HogwartsAPI.Entities;
 using HogwartsAPI.Interfaces;
 using HogwartsAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
@@ -10,6 +11,7 @@ using System.Net;
 namespace HogwartsAPI.Controllers
 {
     [Route("api/student")]
+    [Authorize]
     [ApiController]
     public class StudentsController : ControllerBase
     {
@@ -26,6 +28,7 @@ namespace HogwartsAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "AtLeast15")]
         public async Task<ActionResult<IEnumerable<StudentDto>>> GetAll()
         {
             var students = await _getService.GetAll();

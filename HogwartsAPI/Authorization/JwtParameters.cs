@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace HogwartsAPI.Tools
+namespace HogwartsAPI.Authorization
 {
     public class JwtParameters
     {

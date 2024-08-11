@@ -2,12 +2,14 @@
 using HogwartsAPI.Dtos.WandDtos;
 using HogwartsAPI.Entities;
 using HogwartsAPI.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HogwartsAPI.Controllers
 {
     [Route("/api/wand")]
     [ApiController]
+    [Authorize]
     public class WandController : ControllerBase
     {
         private readonly IGetEntitiesService<WandDto> _getService;

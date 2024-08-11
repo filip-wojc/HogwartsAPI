@@ -133,8 +133,11 @@ namespace HogwartsAPI.Entities
 
             modelBuilder.Entity<Role>().HasData(
                     new Role { Id = 1, Name = "User"},
-                    new Role { Id = 2, Name = "Manager"},
-                    new Role { Id = 3, Name = "Admin"}
+                    new Role { Id = 2, Name = "HouseManager"},
+                    new Role { Id = 3, Name = "WandsManager"},
+                    new Role { Id = 4, Name = "CourseManager"},
+                    new Role { Id = 5, Name = "PetManager"},
+                    new Role { Id = 6, Name = "Admin"}
                 );
 
         }

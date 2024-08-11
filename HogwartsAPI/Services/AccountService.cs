@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
+using HogwartsAPI.Authorization;
 using HogwartsAPI.Dtos.UserDtos;
 using HogwartsAPI.Entities;
 using HogwartsAPI.Interfaces;
-using HogwartsAPI.Tools;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;

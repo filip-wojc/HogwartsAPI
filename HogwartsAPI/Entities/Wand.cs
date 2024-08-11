@@ -15,5 +15,7 @@ namespace HogwartsAPI.Entities
         public int CoreId { get; set; }
         public virtual IEnumerable<Student>? StudentOwners { get; set; }
         public virtual IEnumerable<Teacher>? TeacherOwners { get; set; }
+        public virtual User? CreatedBy { get; set; }
+        public int? CreatedById { get; set; }
     }
 }
