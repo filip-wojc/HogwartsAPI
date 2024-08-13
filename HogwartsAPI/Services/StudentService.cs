@@ -54,6 +54,7 @@ namespace HogwartsAPI.Services
                 throw new BadHttpRequestException("You passed no data");
             }
             var student = await GetStudentById(id);
+          
             if(dto.SchoolYear.HasValue)
             {
                 student.SchoolYear = dto.SchoolYear.Value;

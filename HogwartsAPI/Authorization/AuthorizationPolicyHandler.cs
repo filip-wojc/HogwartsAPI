@@ -1,4 +1,5 @@
-﻿using HogwartsAPI.Interfaces;
+﻿using HogwartsAPI.Entities;
+using HogwartsAPI.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 
 namespace HogwartsAPI.Authorization
@@ -7,13 +8,9 @@ namespace HogwartsAPI.Authorization
     {
         public void AddAuthorizationPolicy(IServiceCollection services)
         {
-            services.AddAuthorization(o =>
-            {
-                o.AddPolicy("AtLeast15", b => b.AddRequirements(new MinimumAgeRequirement(15)));
-            });
-
-            services.AddScoped<IAuthorizationHandler, MinimumAgeRequirementHandler>();
-            services.AddScoped<IAuthorizationHandler, WandOperationRequirementHandler>();
+            services.AddScoped<IAuthorizationHandler, ResourceOperationRequirementHandler<Wand>>();
+            services.AddScoped<IAuthorizationHandler, ResourceOperationRequirementHandler<Pet>>();
+            services.AddScoped<IAuthorizationHandler, ResourceOperationRequirementHandler<Course>>();
         }
     }
 }

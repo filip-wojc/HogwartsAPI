@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using HogwartsAPI.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 
 namespace HogwartsAPI.Entities
 {
-    public class Wand
+    public class Wand : IResource
     {
         public int Id { get; set; }
         public decimal Price { get; set; }

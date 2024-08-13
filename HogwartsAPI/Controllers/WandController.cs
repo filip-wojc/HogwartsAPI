@@ -37,6 +37,7 @@ namespace HogwartsAPI.Controllers
             return Ok(wand);
         }
         [HttpPost]
+        [Authorize(Roles = "WandsManager,Admin")]
         public async Task<ActionResult> Create([FromBody] CreateWandDto dto)
         {
             int wandId = await _addService.Create(dto);
@@ -44,6 +45,7 @@ namespace HogwartsAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "WandsManager,Admin")]
         public async Task<ActionResult> Delete([FromRoute] int id)
         {
             await _deleteService.Delete(id);
@@ -51,6 +53,7 @@ namespace HogwartsAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "WandsManager,Admin")]
         public async Task<ActionResult> Modify([FromRoute] int id, [FromBody] ModifyWandDto dto)
         { 
             await _modifyService.Modify(id, dto);

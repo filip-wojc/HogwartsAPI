@@ -125,10 +125,10 @@ namespace HogwartsAPI.Entities
             );
 
             modelBuilder.Entity<Course>().HasData(
-                new Course { Id = 1, Name = "Defense Against the Dark Arts", Description = "Learn how to defend against dark magic.", DifficultyLevel = 3, Date = new DateTime(2024, 8, 4), TeacherId = 1 },
-                new Course { Id = 2, Name = "Potions", Description = "Learn how to brew magical potions.", DifficultyLevel = 5, Date = new DateTime(2024, 8, 5), TeacherId = 2 },
-                new Course { Id = 3, Name = "Spells", Description = "Learn how to cast advanced speels.", DifficultyLevel = 2, Date = new DateTime(2024, 8, 6), TeacherId = 5 },
-                new Course { Id = 4, Name = "Herbology", Description = "Learn how to take care of plants.", DifficultyLevel = 3, Date = new DateTime(2024, 8, 7), TeacherId = 4 }
+                new Course { Id = 1, Name = "Defense Against the Dark Arts", Description = "Learn how to defend against dark magic.", DifficultyLevel = 3, TeacherId = 1 },
+                new Course { Id = 2, Name = "Potions", Description = "Learn how to brew magical potions.", DifficultyLevel = 5, TeacherId = 2 },
+                new Course { Id = 3, Name = "Spells", Description = "Learn how to cast advanced speels.", DifficultyLevel = 2, TeacherId = 5 },
+                new Course { Id = 4, Name = "Herbology", Description = "Learn how to take care of plants.", DifficultyLevel = 3, TeacherId = 4 }
             );
 
             modelBuilder.Entity<Role>().HasData(
@@ -137,7 +137,8 @@ namespace HogwartsAPI.Entities
                     new Role { Id = 3, Name = "WandsManager"},
                     new Role { Id = 4, Name = "CourseManager"},
                     new Role { Id = 5, Name = "PetManager"},
-                    new Role { Id = 6, Name = "Admin"}
+                    new Role { Id = 6, Name = "StudentManager"},
+                    new Role { Id = 7, Name = "Admin"}
                 );
 
         }

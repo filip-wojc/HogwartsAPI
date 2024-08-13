@@ -1,8 +1,9 @@
 ﻿using HogwartsAPI.Enums;
+using HogwartsAPI.Interfaces;
 
 namespace HogwartsAPI.Entities
 {
-    public class Pet
+    public class Pet : IResource
     {
         public int Id { get; set; }
         public string? Name { get; set; }

@@ -4,6 +4,7 @@ using HogwartsAPI.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HogwartsAPI.Migrations
 {
     [DbContext(typeof(HogwartDbContext))]
-    partial class HogwartDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240813103538_student-manager-role")]
+    partial class studentmanagerrole
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -87,6 +90,9 @@ namespace HogwartsAPI.Migrations
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -112,6 +118,7 @@ namespace HogwartsAPI.Migrations
                         new
                         {
                             Id = 1,
+                            Date = new DateTime(2024, 8, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Learn how to defend against dark magic.",
                             DifficultyLevel = 3,
                             Name = "Defense Against the Dark Arts",
@@ -120,6 +127,7 @@ namespace HogwartsAPI.Migrations
                         new
                         {
                             Id = 2,
+                            Date = new DateTime(2024, 8, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Learn how to brew magical potions.",
                             DifficultyLevel = 5,
                             Name = "Potions",
@@ -128,6 +136,7 @@ namespace HogwartsAPI.Migrations
                         new
                         {
                             Id = 3,
+                            Date = new DateTime(2024, 8, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Learn how to cast advanced speels.",
                             DifficultyLevel = 2,
                             Name = "Spells",
@@ -136,6 +145,7 @@ namespace HogwartsAPI.Migrations
                         new
                         {
                             Id = 4,
+                            Date = new DateTime(2024, 8, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Learn how to take care of plants.",
                             DifficultyLevel = 3,
                             Name = "Herbology",

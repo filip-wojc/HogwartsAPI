@@ -1,4 +1,4 @@
-﻿using HogwartsAPI.Entities;
+﻿     using HogwartsAPI.Entities;
 using System.ComponentModel.DataAnnotations;
 
 namespace HogwartsAPI.Dtos.WandDtos

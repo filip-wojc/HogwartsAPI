@@ -4,6 +4,7 @@ using HogwartsAPI.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HogwartsAPI.Migrations
 {
     [DbContext(typeof(HogwartDbContext))]
-    partial class HogwartDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240813111000_reset-course-data")]
+    partial class resetcoursedata
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -107,40 +110,6 @@ namespace HogwartsAPI.Migrations
                         .IsUnique();
 
                     b.ToTable("Courses");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "Learn how to defend against dark magic.",
-                            DifficultyLevel = 3,
-                            Name = "Defense Against the Dark Arts",
-                            TeacherId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "Learn how to brew magical potions.",
-                            DifficultyLevel = 5,
-                            Name = "Potions",
-                            TeacherId = 2
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Description = "Learn how to cast advanced speels.",
-                            DifficultyLevel = 2,
-                            Name = "Spells",
-                            TeacherId = 5
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Description = "Learn how to take care of plants.",
-                            DifficultyLevel = 3,
-                            Name = "Herbology",
-                            TeacherId = 4
-                        });
                 });
 
             modelBuilder.Entity("HogwartsAPI.Entities.House", b =>

@@ -1,4 +1,4 @@
-﻿using HogwartsAPI.Dtos;
+﻿using HogwartsAPI.Dtos.CourseDtos;
 using HogwartsAPI.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +11,13 @@ namespace HogwartsAPI.Controllers
     public class CourseController : ControllerBase
     {
         private readonly IGetEntitiesService<CourseDto> _getService;
-        public CourseController(IGetEntitiesService<CourseDto> getService)
+        private readonly IAddEntitiesService<CreateCourseDto> _addService;
+        private readonly IModifyEntitiesService<ModifyCourseDto> _modifyService;
+        public CourseController(IGetEntitiesService<CourseDto> getService, IAddEntitiesService<CreateCourseDto> addService, IModifyEntitiesService<ModifyCourseDto> modifyService)
         {
             _getService = getService;
+            _addService = addService;
+            _modifyService = modifyService;
         }
 
         [HttpGet]
@@ -30,7 +34,20 @@ namespace HogwartsAPI.Controllers
             return Ok(course);
         }
 
-        // TO DO
-        // Pozostale metody kontrolera
+        [Authorize(Roles = "CourseManager,Admin")]
+        [HttpPost]
+        public async Task<ActionResult> Create([FromBody] CreateCourseDto dto)
+        {
+            int courseId = await _addService.Create(dto);
+            return Created($"/api/course/{courseId}", null);
+        }
+        [Authorize(Roles = "CourseManager,Admin")]
+        [HttpPut("{courseId}")]
+        public async Task<ActionResult> Modify([FromRoute] int courseId, [FromBody] ModifyCourseDto dto)
+        {
+            await _modifyService.Modify(courseId, dto);
+            return Ok();
+        }
+
     }
 }

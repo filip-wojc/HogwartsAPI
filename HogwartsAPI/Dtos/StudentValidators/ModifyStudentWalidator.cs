@@ -18,7 +18,12 @@ namespace HogwartsAPI.Dtos.StudentValidators
         }
         private bool WandExists(int? wandId)
         {
-            return _context.Wands.Any(w => w.Id == wandId);
+            var isWand = _context.Wands.Any(w => w.Id == wandId);
+            if (isWand || wandId == null)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

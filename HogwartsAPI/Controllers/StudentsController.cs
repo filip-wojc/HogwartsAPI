@@ -41,6 +41,7 @@ namespace HogwartsAPI.Controllers
             return Ok(student);
         }
 
+        [Authorize(Roles = "StudentManager,Admin")]
         [HttpPost]
         public async Task<ActionResult> Create([FromBody] CreateStudentDto dto)
         {
@@ -48,6 +49,7 @@ namespace HogwartsAPI.Controllers
             return Created($"/api/student/{studentId}", null);
         }
 
+        [Authorize(Roles = "StudentManager,Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete([FromRoute] int id)
         {
@@ -55,6 +57,7 @@ namespace HogwartsAPI.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "StudentManager,Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult> Modify([FromRoute] int id, [FromBody] ModifyStudentDto dto)
         {
