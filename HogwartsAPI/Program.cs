@@ -28,7 +28,8 @@ namespace HogwartsAPI
                 new StudentModule(),
                 new WandModule(),
                 new CourseModule(),
-                new UserModule()
+                new UserModule(),
+                new CourseStudentModule()
             };
 
             foreach (var module in modules)

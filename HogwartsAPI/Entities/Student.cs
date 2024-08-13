@@ -13,7 +13,7 @@ namespace HogwartsAPI.Entities
         public int SchoolYear { get; set; }
         public virtual House House { get; set; }
         public int HouseId { get; set; }
-        public virtual IEnumerable<Pet>? Pets { get; set; }
-        public virtual IEnumerable<Course>? Courses { get; set; }
+        public virtual ICollection<Pet>? Pets { get; set; } = new List<Pet>();
+        public virtual ICollection<Course>? Courses { get; set; } = new List<Course>();
     }
 }

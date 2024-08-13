@@ -1,4 +1,5 @@
 ﻿using HogwartsAPI.Dtos.CourseDtos;
+using HogwartsAPI.Entities;
 using HogwartsAPI.Interfaces;
 using HogwartsAPI.Services;
 
@@ -11,6 +12,7 @@ namespace HogwartsAPI.Tools
             services.AddScoped<IGetEntitiesService<CourseDto>, CourseService>();
             services.AddScoped<IAddEntitiesService<CreateCourseDto>, CourseService>();
             services.AddScoped<IModifyEntitiesService<ModifyCourseDto>, CourseService>();
+            services.AddScoped<IDeleteEntitiesService<Course>, CourseService>();
         }
     }
 }

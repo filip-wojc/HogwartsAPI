@@ -1,4 +1,5 @@
 ﻿using HogwartsAPI.Dtos.CourseDtos;
+using HogwartsAPI.Entities;
 using HogwartsAPI.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +14,13 @@ namespace HogwartsAPI.Controllers
         private readonly IGetEntitiesService<CourseDto> _getService;
         private readonly IAddEntitiesService<CreateCourseDto> _addService;
         private readonly IModifyEntitiesService<ModifyCourseDto> _modifyService;
-        public CourseController(IGetEntitiesService<CourseDto> getService, IAddEntitiesService<CreateCourseDto> addService, IModifyEntitiesService<ModifyCourseDto> modifyService)
+        private readonly IDeleteEntitiesService<Course> _deleteService;
+        public CourseController(IGetEntitiesService<CourseDto> getService, IAddEntitiesService<CreateCourseDto> addService, IModifyEntitiesService<ModifyCourseDto> modifyService,IDeleteEntitiesService<Course> deleteService)
         {
             _getService = getService;
             _addService = addService;
             _modifyService = modifyService;
+            _deleteService = deleteService;
         }
 
         [HttpGet]
@@ -47,6 +50,14 @@ namespace HogwartsAPI.Controllers
         {
             await _modifyService.Modify(courseId, dto);
             return Ok();
+        }
+
+        [Authorize(Roles = "CourseManager,Admin")]
+        [HttpDelete("{courseId}")]
+        public async Task<ActionResult> Delete([FromRoute] int courseId)
+        {
+            await _deleteService.Delete(courseId);
+            return NoContent();
         }
 
     }

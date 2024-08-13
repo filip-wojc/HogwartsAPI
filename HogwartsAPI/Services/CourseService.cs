@@ -11,7 +11,7 @@ using HogwartsAPI.Enums;
 
 namespace HogwartsAPI.Services
 {
-    public class CourseService : IGetEntitiesService<CourseDto>, IAddEntitiesService<CreateCourseDto>, IModifyEntitiesService<ModifyCourseDto>
+    public class CourseService : IGetEntitiesService<CourseDto>, IAddEntitiesService<CreateCourseDto>, IModifyEntitiesService<ModifyCourseDto>, IDeleteEntitiesService<Course>
     {
         private readonly HogwartDbContext _context;
         private readonly IMapper _mapper;
@@ -76,6 +76,21 @@ namespace HogwartsAPI.Services
 
             await _context.SaveChangesAsync();
         }
+
+        public async Task Delete(int id)
+        {
+            var course = await GetCourseById(id);
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(_userContext.User, course,
+                new ResourceOperationRequirement(ResourceOperation.Delete));
+
+            if (!authorizationResult.Succeeded)
+            {
+                throw new ForbidException("You can't delete a course you didn't add");
+            }
+
+            await _context.Courses.Where(c => c.Id == id).ExecuteDeleteAsync();
+        }
         private async Task<Course> GetCourseById(int id)
         {
             var course = await _context.Courses.Include(c => c.Teacher).Include(c => c.Students).FirstOrDefaultAsync(s => s.Id == id);
@@ -86,6 +101,6 @@ namespace HogwartsAPI.Services
 
             return course;
         }
-       
+        
     }
 }

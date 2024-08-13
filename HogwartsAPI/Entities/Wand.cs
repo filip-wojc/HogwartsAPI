@@ -14,8 +14,8 @@ namespace HogwartsAPI.Entities
         public string? Color { get; set; }
         public Core? Core { get; set; }
         public int CoreId { get; set; }
-        public virtual IEnumerable<Student>? StudentOwners { get; set; }
-        public virtual IEnumerable<Teacher>? TeacherOwners { get; set; }
+        public virtual ICollection<Student>? StudentOwners { get; set; } = new List<Student>();
+        public virtual ICollection<Teacher>? TeacherOwners { get; set; } = new List<Teacher>();
         public virtual User? CreatedBy { get; set; }
         public int? CreatedById { get; set; }
     }
