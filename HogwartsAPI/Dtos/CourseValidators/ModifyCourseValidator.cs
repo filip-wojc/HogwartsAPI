@@ -30,12 +30,12 @@ namespace HogwartsAPI.Dtos.CourseValidators
         }
         private bool TeacherHasCourse(int? teacherId)
         {
-            var isCourse = _context.Courses.Any(c => c.TeacherId == teacherId);
-            if (isCourse || teacherId != null)
+            if (teacherId == null)
             {
-                return true;
+                return false;
             }
-            return false;
+            var isCourse = _context.Courses.Any(c => c.TeacherId == teacherId);
+            return isCourse;
         }
     }
     

@@ -6,5 +6,6 @@ namespace HogwartsAPI.Interfaces
     {
         ClaimsPrincipal User { get; }
         int? UserId { get; }
+        string UserRole { get; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using HogwartsAPI.Dtos.CourseDtos;
+using HogwartsAPI.Dtos.HouseDtos;
 using HogwartsAPI.Dtos.StudentDtos;
 using HogwartsAPI.Dtos.UserDtos;
 using HogwartsAPI.Dtos.WandDtos;
@@ -29,6 +30,11 @@ namespace HogwartsAPI.Tools
                 .ForMember(dest => dest.TeacherName, o => o.MapFrom(src => $"{src.Teacher.Name} {src.Teacher.Surname}"))
                 .ForMember(dest => dest.StudentsNames, o => o.MapFrom(src => src.Students.Select(s => $"{s.Name} {s.Surname}")));
             CreateMap<CreateCourseDto, Course>();
+
+            CreateMap<House, HouseDto>()
+                .ForMember(dest => dest.Name, o => o.MapFrom(src => src.Name.ToString()))
+                .ForMember(dest => dest.TeacherName, o => o.MapFrom(src => $"{src.Teacher.Name} {src.Teacher.Surname}"))
+                .ForMember(dest => dest.StudentsCount, o => o.MapFrom(src => src.Students.Count()));
         }
     }
 }

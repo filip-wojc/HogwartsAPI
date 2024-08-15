@@ -11,10 +11,12 @@ namespace HogwartsAPI.Services
     {
         private readonly HogwartDbContext _context;
         private readonly IMapper _mapper;
-        public CourseStudentsService(HogwartDbContext context, IMapper mapper)
+        private readonly IUserContextService _userContext;
+        public CourseStudentsService(HogwartDbContext context, IMapper mapper, IUserContextService userContext)
         {
             _context = context;
             _mapper = mapper;
+            _userContext = userContext;
         }
 
         public async Task<IEnumerable<StudentDto>> GetAllChildren(int parrentId)
@@ -39,6 +41,12 @@ namespace HogwartsAPI.Services
         public async Task Create(int parrentId, int childId)
         {
             var course = await GetCourseById(parrentId);
+
+            if (course.CreatedById != _userContext.UserId && _userContext.UserRole != "Admin")
+            {
+                throw new ForbidException("You can't add students to the course you didn't create");
+            }
+
             var student = await GetStudentById(childId);
 
             if (course.Students.Contains(student))
@@ -53,7 +61,13 @@ namespace HogwartsAPI.Services
         public async Task DeleteAllChildren(int parrentId)
         {
             var course = await GetCourseById(parrentId);
-            if(!course.Students.Any())
+
+            if (course.CreatedById != _userContext.UserId && _userContext.UserRole != "Admin")
+            {
+                throw new ForbidException("You can't delete students from the course you didn't create");
+            }
+
+            if (!course.Students.Any())
             {
                 throw new BadHttpRequestException("This course does not have any students");
             }
@@ -64,6 +78,12 @@ namespace HogwartsAPI.Services
         public async Task DeleteChild(int parrentId, int childId)
         {
             var course = await GetCourseById(parrentId);
+
+            if (course.CreatedById != _userContext.UserId && _userContext.UserRole != "Admin")
+            {
+                throw new ForbidException("You can't delete student from the course you didn't create");
+            }
+
             var student = await GetStudentById(childId);
 
             if(!course.Students.Contains(student))

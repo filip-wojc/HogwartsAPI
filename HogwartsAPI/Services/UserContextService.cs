@@ -13,5 +13,6 @@ namespace HogwartsAPI.Services
 
         public ClaimsPrincipal User => _context.HttpContext?.User;
         public int? UserId => User is null ? null : (int?)int.Parse(User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value);
+        public string UserRole => User.FindFirst(c => c.Type == ClaimTypes.Role).Value;
     }
 }
