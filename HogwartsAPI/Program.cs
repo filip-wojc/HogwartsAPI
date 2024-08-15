@@ -84,7 +84,8 @@ namespace HogwartsAPI
             builder.Services.AddExceptionHandler<AppExceptionHandler>();
             builder.Services.AddExceptionHandler<GeneralExceptionHandler>();
             builder.Services.AddHttpContextAccessor();
-            builder.Services.AddSwaggerGen();
+            var swaggerConfig = new SwaggerConfigTool();
+            swaggerConfig.RegisterServices(builder.Services);
 
             var app = builder.Build();
 
