@@ -3,6 +3,7 @@ using HogwartsAPI.Dtos.CourseDtos;
 using HogwartsAPI.Dtos.HouseDtos;
 using HogwartsAPI.Dtos.PetDtos;
 using HogwartsAPI.Dtos.StudentDtos;
+using HogwartsAPI.Dtos.TeacherDtos;
 using HogwartsAPI.Dtos.UserDtos;
 using HogwartsAPI.Dtos.WandDtos;
 using HogwartsAPI.Entities;
@@ -43,6 +44,13 @@ namespace HogwartsAPI.Tools
                 .ForMember(dest => dest.OwnerName, o => o.MapFrom(src => $"{src.Student.Name} {src.Student.Surname}"));
             CreateMap<CreatePetDto, Pet>()
                 .ForMember(dest => dest.Type, o => o.MapFrom(src => Enum.Parse<PetType>(src.Type, true)));
+
+            CreateMap<Teacher, TeacherDto>()
+                .ForMember(dest => dest.HouseName, o => o.MapFrom(src => src.House.Name.ToString()))
+                .ForMember(dest => dest.CourseName, o => o.MapFrom(src => src.Course.Name))
+                .ForMember(dest => dest.WandCore, o => o.MapFrom(src => src.Wand.Core.Name));
+
+            CreateMap<CreateTeacherDto, Teacher>();
         }
     }
 }

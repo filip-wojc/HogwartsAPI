@@ -10,7 +10,7 @@ using HogwartsAPI.Enums;
 
 namespace HogwartsAPI.Services
 {
-    public class PetService : IGetEntitiesService<PetDto>, IAddEntitiesService<CreatePetDto>, IDeleteEntitiesService<Pet>
+    public class PetService : IGetEntitiesService<PetDto>, IAddEntitiesService<CreatePetDto>, IDeleteEntitiesService<Pet>, IManyToManyRelationGetService<Student, PetDto>
     {
         private readonly HogwartDbContext _context;
         private readonly IMapper _mapper;
@@ -34,6 +34,17 @@ namespace HogwartsAPI.Services
         {
             var pet = await GetPetById(id);
             return _mapper.Map<PetDto>(pet);
+        }
+
+        public async Task<IEnumerable<PetDto>> GetAllChildren(int parrentId)
+        {
+            var student = await _context.Students.Include(s => s.Pets).FirstOrDefaultAsync(s => s.Id == parrentId);
+            if (student is null)
+            {
+                throw new NotFoundException("Student not found");
+            }
+
+            return _mapper.Map<IEnumerable<PetDto>>(student.Pets);
         }
 
         public async Task<int> Create(CreatePetDto dto)
@@ -70,5 +81,9 @@ namespace HogwartsAPI.Services
             return pet;
         }
 
+        public Task<PetDto> GetChildById(int parrentId, int childId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

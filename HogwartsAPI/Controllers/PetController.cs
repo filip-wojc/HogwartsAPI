@@ -15,10 +15,13 @@ namespace HogwartsAPI.Controllers
         private readonly IGetEntitiesService<PetDto> _getService;
         private readonly IAddEntitiesService<CreatePetDto> _addService;
         private readonly IDeleteEntitiesService<Pet> _deleteService;
-        public PetController(IGetEntitiesService<PetDto> getService, IAddEntitiesService<CreatePetDto> addService, IDeleteEntitiesService<Pet> deleteService)
+        private readonly IManyToManyRelationGetService<Student, PetDto> _getStudentPetsService;
+        public PetController(IGetEntitiesService<PetDto> getService, IAddEntitiesService<CreatePetDto> addService,
+            IManyToManyRelationGetService<Student, PetDto> getStudentPetsService, IDeleteEntitiesService<Pet> deleteService)
         {
             _getService = getService;
             _addService = addService;
+            _getStudentPetsService = getStudentPetsService;
             _deleteService = deleteService;
         }
 
@@ -34,6 +37,13 @@ namespace HogwartsAPI.Controllers
         {
             var pet = await _getService.GetById(petId);
             return Ok(pet);
+        }
+
+        [HttpGet("students/{studentId}")]
+        public async Task<ActionResult<IEnumerable<PetDto>>> GetStudentPets([FromRoute] int studentId)
+        {
+            var pets = await _getStudentPetsService.GetAllChildren(studentId);
+            return Ok(pets);
         }
 
         [Authorize(Roles = "PetManager,Admin")]

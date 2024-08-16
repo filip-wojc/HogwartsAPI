@@ -12,7 +12,7 @@ namespace HogwartsAPI.Dtos.StudentValidators
         {
             _context = context;
 
-            RuleFor(s => s.Name).NotEmpty().MaximumLength(25);
+            RuleFor(s => s.Name).NotEmpty();
             RuleFor(s => s.Surname).NotEmpty();
             RuleFor(s => s.DateOfBirth).NotEmpty();
             RuleFor(s => s.SchoolYear).NotEmpty().GreaterThanOrEqualTo(1).LessThanOrEqualTo(7);
