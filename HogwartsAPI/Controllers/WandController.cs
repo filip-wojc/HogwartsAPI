@@ -16,19 +16,22 @@ namespace HogwartsAPI.Controllers
         private readonly IAddEntitiesService<CreateWandDto> _addService;
         private readonly IDeleteEntitiesService<Wand> _deleteService;
         private readonly IModifyEntitiesService<ModifyWandDto> _modifyService;
-        public WandController(IGetEntitiesService<WandDto> getService, IAddEntitiesService<CreateWandDto> addService, IDeleteEntitiesService<Wand> deleteService, IModifyEntitiesService<ModifyWandDto> modifyService)
+        private readonly IPaginationService<WandDto> _paginationService;
+        public WandController(IGetEntitiesService<WandDto> getService, IAddEntitiesService<CreateWandDto> addService, IDeleteEntitiesService<Wand> deleteService, IModifyEntitiesService<ModifyWandDto> modifyService, IPaginationService<WandDto> paginationService)
         {
             _getService = getService;
             _addService = addService;
             _deleteService = deleteService;
             _modifyService = modifyService;
+            _paginationService = paginationService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<WandDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<WandDto>>> GetAll([FromQuery] WandPaginateQuery query)
         {
             var wands = await _getService.GetAll();
-            return Ok(wands);
+            var paginatedResult = _paginationService.GetPaginatedResult(query, wands);
+            return Ok(paginatedResult);
         }
         [HttpGet("{id}")]
         public async Task<ActionResult<WandDto>> Get([FromRoute] int id)

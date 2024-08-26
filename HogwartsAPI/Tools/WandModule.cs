@@ -13,6 +13,7 @@ namespace HogwartsAPI.Tools
             services.AddScoped<IAddEntitiesService<CreateWandDto>, WandService>();
             services.AddScoped<IDeleteEntitiesService<Wand>, WandService>();
             services.AddScoped<IModifyEntitiesService<ModifyWandDto>, WandService>();
+            services.AddScoped<IPaginationService<WandDto>, WandPaginationService>();
         }
     }
 }
