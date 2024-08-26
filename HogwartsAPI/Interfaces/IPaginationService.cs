@@ -5,6 +5,6 @@ namespace HogwartsAPI.Interfaces
 {
     public interface IPaginationService<T> where T : class
     {
-        public PageResult<T> GetPaginatedResult(IPaginateQuery query, IEnumerable<T> allEntities);
+        public PageResult<T> GetPaginatedResult(PaginateQuery query, IEnumerable<T> allEntities);
     }
 }

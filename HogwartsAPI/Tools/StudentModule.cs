@@ -1,4 +1,5 @@
 ﻿using HogwartsAPI.Dtos.StudentDtos;
+using HogwartsAPI.Dtos.TeacherDtos;
 using HogwartsAPI.Entities;
 using HogwartsAPI.Interfaces;
 using HogwartsAPI.Services;
@@ -13,6 +14,7 @@ namespace HogwartsAPI.Tools
             services.AddScoped<IAddEntitiesService<CreateStudentDto>, StudentService>();
             services.AddScoped<IDeleteEntitiesService<Student>, StudentService>();
             services.AddScoped<IModifyEntitiesService<ModifyStudentDto>, StudentService>();
+            services.AddScoped<IPaginationService<StudentDto>, StudentPaginationService>();
         }
     }
 }

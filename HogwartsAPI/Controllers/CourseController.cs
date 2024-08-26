@@ -1,8 +1,10 @@
 ﻿using HogwartsAPI.Dtos.CourseDtos;
 using HogwartsAPI.Entities;
 using HogwartsAPI.Interfaces;
+using HogwartsAPI.Tools;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Runtime.InteropServices;
 
 namespace HogwartsAPI.Controllers
 {
@@ -15,19 +17,23 @@ namespace HogwartsAPI.Controllers
         private readonly IAddEntitiesService<CreateCourseDto> _addService;
         private readonly IModifyEntitiesService<ModifyCourseDto> _modifyService;
         private readonly IDeleteEntitiesService<Course> _deleteService;
-        public CourseController(IGetEntitiesService<CourseDto> getService, IAddEntitiesService<CreateCourseDto> addService, IModifyEntitiesService<ModifyCourseDto> modifyService,IDeleteEntitiesService<Course> deleteService)
+        private readonly IPaginationService<CourseDto> _paginationService;
+        public CourseController(IGetEntitiesService<CourseDto> getService, IAddEntitiesService<CreateCourseDto> addService,
+            IModifyEntitiesService<ModifyCourseDto> modifyService,IDeleteEntitiesService<Course> deleteService, IPaginationService<CourseDto> paginationService)
         {
             _getService = getService;
             _addService = addService;
             _modifyService = modifyService;
             _deleteService = deleteService;
+            _paginationService = paginationService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CourseDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<CourseDto>>> GetAll([FromQuery] PaginateQuery query)
         {
             var courses = await _getService.GetAll();
-            return Ok(courses);
+            var paginationResult = _paginationService.GetPaginatedResult(query, courses);
+            return Ok(paginationResult);
         }
 
         [HttpGet("{courseId}")]

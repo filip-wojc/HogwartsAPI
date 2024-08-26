@@ -13,6 +13,7 @@ namespace HogwartsAPI.Tools
             services.AddScoped<IAddEntitiesService<CreatePetDto>, PetService>();
             services.AddScoped<IDeleteEntitiesService<Pet>, PetService>();
             services.AddScoped<IManyToManyRelationGetService<Student, PetDto>, PetService>();
+            services.AddScoped<IPaginationService<PetDto>, PetPaginationService>();
         }
     }
 }

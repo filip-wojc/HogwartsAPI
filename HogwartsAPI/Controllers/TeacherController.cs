@@ -1,6 +1,7 @@
 ﻿using HogwartsAPI.Dtos.TeacherDtos;
 using HogwartsAPI.Entities;
 using HogwartsAPI.Interfaces;
+using HogwartsAPI.Tools;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,21 +17,23 @@ namespace HogwartsAPI.Controllers
         private readonly IAddEntitiesService<CreateTeacherDto> _addService;
         private readonly IModifyEntitiesService<ModifyTeacherDto> _modifyService;
         private readonly IDeleteEntitiesService<Teacher> _deleteService;
-
+        private readonly IPaginationService<TeacherDto> _paginationService;
         public TeacherController(IGetEntitiesService<TeacherDto> getService, IAddEntitiesService<CreateTeacherDto> addService,
-                               IModifyEntitiesService<ModifyTeacherDto> modifyService, IDeleteEntitiesService<Teacher> deleteService)
+                               IModifyEntitiesService<ModifyTeacherDto> modifyService, IDeleteEntitiesService<Teacher> deleteService, IPaginationService<TeacherDto> paginationService)
         {
             _getService = getService;
             _addService = addService;
             _modifyService = modifyService;
             _deleteService = deleteService;
+            _paginationService = paginationService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TeacherDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<TeacherDto>>> GetAll([FromQuery] PaginateQuery query)
         {
             var teachers = await _getService.GetAll();
-            return Ok(teachers);
+            var paginationResult = _paginationService.GetPaginatedResult(query, teachers);
+            return Ok(paginationResult);
         }
         [HttpGet("{teacherId}")]
         public async Task<ActionResult<TeacherDto>> GetById([FromRoute] int teacherId)

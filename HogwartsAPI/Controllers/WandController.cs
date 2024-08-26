@@ -2,6 +2,7 @@
 using HogwartsAPI.Dtos.WandDtos;
 using HogwartsAPI.Entities;
 using HogwartsAPI.Interfaces;
+using HogwartsAPI.Tools;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,7 +28,7 @@ namespace HogwartsAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<WandDto>>> GetAll([FromQuery] WandPaginateQuery query)
+        public async Task<ActionResult<IEnumerable<WandDto>>> GetAll([FromQuery] PaginateQuery query)
         {
             var wands = await _getService.GetAll();
             var paginatedResult = _paginationService.GetPaginatedResult(query, wands);

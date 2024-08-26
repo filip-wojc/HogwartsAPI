@@ -13,6 +13,7 @@ namespace HogwartsAPI.Tools
             services.AddScoped<IAddEntitiesService<CreateCourseDto>, CourseService>();
             services.AddScoped<IModifyEntitiesService<ModifyCourseDto>, CourseService>();
             services.AddScoped<IDeleteEntitiesService<Course>, CourseService>();
+            services.AddScoped<IPaginationService<CourseDto>, CoursePaginationService>();
         }
     }
 }

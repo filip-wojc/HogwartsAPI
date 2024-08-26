@@ -1,9 +1,8 @@
 ﻿using HogwartsAPI.Enums;
-using HogwartsAPI.Interfaces;
 
-namespace HogwartsAPI.Dtos.WandDtos
+namespace HogwartsAPI.Tools
 {
-    public class WandPaginateQuery : IPaginateQuery
+    public class PaginateQuery
     {
         public string? SearchPhrase { get; set; }
         public int PageNumber { get; set; }

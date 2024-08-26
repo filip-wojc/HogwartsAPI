@@ -1,6 +1,7 @@
 ﻿using HogwartsAPI.Dtos.StudentDtos;
 using HogwartsAPI.Entities;
 using HogwartsAPI.Interfaces;
+using HogwartsAPI.Tools;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,22 +15,26 @@ namespace HogwartsAPI.Controllers
         private readonly IManyToManyRelationGetService<Course, StudentDto> _getService;
         private readonly IManyToManyRelationAddService<Course, Student> _addService;
         private readonly IManyToManyRelationDeleteService<Course, Student> _deleteService;
-        public CourseStudentsController(IManyToManyRelationGetService<Course, StudentDto> getService, IManyToManyRelationAddService<Course, Student> addService, IManyToManyRelationDeleteService<Course, Student> deleteService)
+        private readonly IPaginationService<StudentDto> _paginationService;
+        public CourseStudentsController(IManyToManyRelationGetService<Course, StudentDto> getService, IManyToManyRelationAddService<Course, Student> addService,
+            IManyToManyRelationDeleteService<Course, Student> deleteService, IPaginationService<StudentDto> paginationService)
         {
             _getService = getService;
             _addService = addService;
             _deleteService = deleteService;
+            _paginationService = paginationService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<StudentDto>>> GetAll([FromRoute] int courseId)
+        public async Task<ActionResult<IEnumerable<StudentDto>>> GetAll([FromRoute] int courseId, [FromQuery] PaginateQuery query)
         {
             var students = await _getService.GetAllChildren(courseId);
-            return Ok(students);
+            var paginateResult = _paginationService.GetPaginatedResult(query, students);
+            return Ok(paginateResult);
         }
 
         [HttpGet("{studentId}")]
-        public async Task<ActionResult<IEnumerable<StudentDto>>> GetAll([FromRoute] int courseId, [FromRoute] int studentId)
+        public async Task<ActionResult<StudentDto>> GetStudentFromCourse([FromRoute] int courseId, [FromRoute] int studentId)
         {
             var student = await _getService.GetChildById(courseId, studentId);
             return Ok(student);

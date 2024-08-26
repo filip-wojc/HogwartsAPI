@@ -14,7 +14,7 @@ namespace HogwartsAPI.Services
         {
             _mapper = mapper;
         }
-        public PageResult<WandDto> GetPaginatedResult(IPaginateQuery query, IEnumerable<WandDto> allWands)
+        public PageResult<WandDto> GetPaginatedResult(PaginateQuery query, IEnumerable<WandDto> allWands)
         {
             var baseQuery = allWands.Where(w => query.SearchPhrase == null || w.CoreName.ToLower().Contains(query.SearchPhrase));
             if(!string.IsNullOrEmpty(query.SortBy))

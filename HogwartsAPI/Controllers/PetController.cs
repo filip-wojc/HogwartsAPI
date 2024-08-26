@@ -1,6 +1,7 @@
 ﻿using HogwartsAPI.Dtos.PetDtos;
 using HogwartsAPI.Entities;
 using HogwartsAPI.Interfaces;
+using HogwartsAPI.Tools;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Runtime.CompilerServices;
@@ -16,20 +17,23 @@ namespace HogwartsAPI.Controllers
         private readonly IAddEntitiesService<CreatePetDto> _addService;
         private readonly IDeleteEntitiesService<Pet> _deleteService;
         private readonly IManyToManyRelationGetService<Student, PetDto> _getStudentPetsService;
+        private readonly IPaginationService<PetDto> _paginationService;
         public PetController(IGetEntitiesService<PetDto> getService, IAddEntitiesService<CreatePetDto> addService,
-            IManyToManyRelationGetService<Student, PetDto> getStudentPetsService, IDeleteEntitiesService<Pet> deleteService)
+            IManyToManyRelationGetService<Student, PetDto> getStudentPetsService, IDeleteEntitiesService<Pet> deleteService, IPaginationService<PetDto> paginationService)
         {
             _getService = getService;
             _addService = addService;
             _getStudentPetsService = getStudentPetsService;
             _deleteService = deleteService;
+            _paginationService = paginationService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PetDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<PetDto>>> GetAll([FromQuery] PaginateQuery query)
         {
             var pets = await _getService.GetAll();
-            return Ok(pets);
+            var paginatedResult = _paginationService.GetPaginatedResult(query, pets);
+            return Ok(paginatedResult);
         }
 
         [HttpGet("{petId}")]
