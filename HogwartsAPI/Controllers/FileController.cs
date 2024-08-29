@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using HogwartsAPI.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 
@@ -25,9 +26,11 @@ namespace HogwartsAPI.Controllers
             var fileContent = System.IO.File.ReadAllBytes(filePath);
             return File(fileContent, contentType, fileName);  
         }
+        
         [HttpPost]
-        public ActionResult Upload([FromForm] IFormFile file)
+        public ActionResult Upload([FromForm] FileUploadDto dto)
         {
+            var file = dto.File;
             if(file != null && file.Length > 0)
             {
                 var rootPath = Directory.GetCurrentDirectory();
@@ -37,9 +40,10 @@ namespace HogwartsAPI.Controllers
                     file.CopyTo(stream);
                 }
 
-                return Created();
+                return Ok();
             }
             return BadRequest();
         }
+        
     }
 }

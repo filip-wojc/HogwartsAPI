@@ -99,20 +99,19 @@ namespace HogwartsAPI
             });
 
             var app = builder.Build();
-            app.UseResponseCaching();
+            app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseResponseCaching();
+
             app.UseCors("FrontEndClient");
             app.UseExceptionHandler(_ => { });
             // Configure the HTTP request pipeline.
 
             app.UseAuthentication();
-
-            app.UseHttpsRedirection();
+            app.UseAuthorization();
 
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Hogwarts API"));
-
-            app.UseAuthorization();
 
 
             app.MapControllers();
