@@ -88,9 +88,20 @@ namespace HogwartsAPI
             builder.Services.AddHttpContextAccessor();
             var swaggerConfig = new SwaggerConfigTool();
             swaggerConfig.RegisterServices(builder.Services);
+            builder.Services.AddCors(o =>
+            {
+                o.AddPolicy("FrontEndClient", b =>
+                {
+                    b.AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .WithOrigins("http://127.0.0.1:5500");
+                });
+            });
 
             var app = builder.Build();
-
+            app.UseResponseCaching();
+            app.UseStaticFiles();
+            app.UseCors("FrontEndClient");
             app.UseExceptionHandler(_ => { });
             // Configure the HTTP request pipeline.
 
