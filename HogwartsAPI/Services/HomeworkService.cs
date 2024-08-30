@@ -55,13 +55,13 @@ namespace HogwartsAPI.Services
         public async Task DeleteChild(int parrentId, int childId)
         {
             var course = await GetCourseById(parrentId);
+            var homework = await GetHomeworkById(childId);
 
-            if (course.CreatedById != _userContext.UserId && _userContext.UserRole != "Admin")
+            if (homework.CreatedById != _userContext.UserId && _userContext.UserRole != "Admin")
             {
-                throw new ForbidException("You can't delete homework from the course you didn't create");
+                throw new ForbidException("You can't delete homework that you didn't create");
             }
 
-            var homework = await GetHomeworkById(childId);
 
             if (!course.Homeworks.Contains(homework))
             {
