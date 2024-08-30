@@ -15,5 +15,6 @@ namespace HogwartsAPI.Entities
         public int HouseId { get; set; }
         public virtual ICollection<Pet>? Pets { get; set; } = new List<Pet>();
         public virtual ICollection<Course>? Courses { get; set; } = new List<Course>();
+        public virtual ICollection<HomeworkSubmission>? Submissions { get; set; } = new List<HomeworkSubmission>();
     }
 }

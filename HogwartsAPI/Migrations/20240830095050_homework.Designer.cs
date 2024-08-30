@@ -4,6 +4,7 @@ using HogwartsAPI.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HogwartsAPI.Migrations
 {
     [DbContext(typeof(HogwartDbContext))]
-    partial class HogwartDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240830095050_homework")]
+    partial class homework
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -180,9 +183,6 @@ namespace HogwartsAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CreatedById")
-                        .HasColumnType("int");
-
                     b.Property<int>("Grade")
                         .HasColumnType("int");
 
@@ -199,8 +199,6 @@ namespace HogwartsAPI.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
 
                     b.HasIndex("HomeworkId");
 
@@ -750,10 +748,6 @@ namespace HogwartsAPI.Migrations
 
             modelBuilder.Entity("HogwartsAPI.Entities.HomeworkSubmission", b =>
                 {
-                    b.HasOne("HogwartsAPI.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
                     b.HasOne("HogwartsAPI.Entities.Homework", "Homework")
                         .WithMany("Submissions")
                         .HasForeignKey("HomeworkId")
@@ -765,8 +759,6 @@ namespace HogwartsAPI.Migrations
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("CreatedBy");
 
                     b.Navigation("Homework");
 

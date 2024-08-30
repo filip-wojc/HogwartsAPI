@@ -17,6 +17,8 @@ namespace HogwartsAPI.Entities
         public DbSet<Core> Cores { get; set; }
         public DbSet<Pet> Pets { get; set; }
         public DbSet<Course> Courses { get; set; }
+        public DbSet<Homework> Homeworks { get; set; }
+        public DbSet<HomeworkSubmission> HomeworkSubmissions { get; set; }
         public DbSet<House> Houses { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
@@ -45,6 +47,24 @@ namespace HogwartsAPI.Entities
                .WithMany(w => w.StudentOwners)
                .HasForeignKey(p => p.WandId)
                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Student>()
+              .HasMany(s => s.Submissions)
+              .WithOne(s => s.Student)
+              .HasForeignKey(s => s.StudentId)
+              .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Homework>()
+               .HasOne(h => h.Course)
+               .WithMany(c => c.Homeworks)
+               .HasForeignKey(h => h.CourseId)
+               .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Homework>()
+              .HasMany(h => h.Submissions)
+              .WithOne(s => s.Homework)
+              .HasForeignKey(h => h.HomeworkId)
+              .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Teacher>()
                .HasOne(t => t.Wand)
