@@ -13,6 +13,7 @@ namespace HogwartsAPI.Tools
             services.AddScoped<IAddEntitiesService<CreateHomeworkDto>, HomeworkService>();
             services.AddScoped<IManyToManyRelationDeleteService<Course, Homework>, HomeworkService>();
             services.AddScoped<IModifyEntitiesService<ModifyHomeworkDto>, HomeworkService>();
+            services.AddScoped<IHomeworkFileService<HomeworkResultDto>, HomeworkSenderService>();
         }
     }
 }
