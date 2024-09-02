@@ -9,7 +9,7 @@ namespace HogwartsAPI.Controllers
 {
     [ApiController]
     [Authorize]
-    [Route("api/homework-manager")]
+    [Route("api/homework-results")]
     public class HomeworkSenderController : ControllerBase
     {
         private readonly IHomeworkFileService<HomeworkResultDto> _homeworkFileService;
