@@ -10,7 +10,7 @@ using HogwartsAPI.Enums;
 
 namespace HogwartsAPI.Services
 {
-    public class HomeworkService : IManyToManyRelationGetService<Course, HomeworkDto>, IAddEntitiesService<CreateHomeworkDto>, IManyToManyRelationDeleteService<Course, Homework>
+    public class HomeworkService : IManyToManyRelationGetService<Course, HomeworkDto>, IAddEntitiesService<CreateHomeworkDto>, IManyToManyRelationDeleteService<Course, Homework>, IModifyEntitiesService<ModifyHomeworkDto>
     {
         private readonly HogwartDbContext _context;
         private readonly IMapper _mapper;
@@ -52,6 +52,35 @@ namespace HogwartsAPI.Services
             return homework.Id;
         }
 
+        public async Task Modify(int id, ModifyHomeworkDto dto)
+        {
+            if (!dto.DueDate.HasValue && string.IsNullOrEmpty(dto.Description))
+            {
+                throw new BadHttpRequestException("Yous passed no data");
+            }
+
+            var homework = await GetHomeworkById(id);
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(_userContext.User, homework,
+                new ResourceOperationRequirement(ResourceOperation.Update));
+
+            if (!authorizationResult.Succeeded)
+            {
+                throw new ForbidException("You can't modify a homework you didn't add");
+            }
+
+            if (dto.DueDate.HasValue)
+            {
+                homework.DueDate = dto.DueDate.Value;
+            }
+            if (!string.IsNullOrEmpty(dto.Description))
+            {
+                homework.Description = dto.Description;
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
         public async Task DeleteChild(int parrentId, int childId)
         {
             var course = await GetCourseById(parrentId);
@@ -78,7 +107,7 @@ namespace HogwartsAPI.Services
             var homeworksToDelete = _context.Homeworks.Where(h => h.CreatedById == _userContext.UserId && h.CourseId == parrentId);
             if (!homeworksToDelete.Any() && _userContext.UserRole != "Admin")
             {
-                throw new BadHttpRequestException("There are no homeworks that you can delete. You can only delete homeworks from your courses or homeworks that you created");
+                throw new BadHttpRequestException("There are no homeworks that you can delete. You can only delete homeworks that you created");
             }
             await homeworksToDelete.ExecuteDeleteAsync();
         }
@@ -96,7 +125,7 @@ namespace HogwartsAPI.Services
 
         private async Task<Homework> GetHomeworkById(int homeworkId)
         {
-            var homework = await _context.Homeworks.FirstOrDefaultAsync(h => h.Id == homeworkId);
+            var homework = await _context.Homeworks.Include(h => h.CreatedBy).FirstOrDefaultAsync(h => h.Id == homeworkId);
             if (homework is null)
             {
                 throw new NotFoundException("Homework not found");

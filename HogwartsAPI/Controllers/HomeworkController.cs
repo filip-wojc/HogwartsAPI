@@ -16,12 +16,14 @@ namespace HogwartsAPI.Controllers
         private readonly IManyToManyRelationGetService<Course, HomeworkDto> _getService;
         private readonly IAddEntitiesService<CreateHomeworkDto> _addService;
         private readonly IManyToManyRelationDeleteService<Course, Homework> _deleteService;
+        private readonly IModifyEntitiesService<ModifyHomeworkDto> _modifyService;
         public HomeworkController(IManyToManyRelationGetService<Course, HomeworkDto> getService, IAddEntitiesService<CreateHomeworkDto> addService,
-                            IManyToManyRelationDeleteService<Course, Homework> deleteService)
+                            IManyToManyRelationDeleteService<Course, Homework> deleteService, IModifyEntitiesService<ModifyHomeworkDto> modifyService)
         {
             _getService = getService;
             _addService = addService;
             _deleteService = deleteService;
+            _modifyService = modifyService;
         }
         [HttpGet("{courseId}/homeworks")]
         public async Task<ActionResult<IEnumerable<HomeworkDto>>> GetAll([FromRoute] int courseId)
@@ -44,6 +46,15 @@ namespace HogwartsAPI.Controllers
             int homeworkId = await _addService.Create(dto);
             return Created($"/api/course/{dto.CourseId}/homeworks/{homeworkId}", null);
         }
+
+        [Authorize(Roles = "CourseManager,Admin")]
+        [HttpPut("homeworks/{homeworkId}")]
+        public async Task<ActionResult> Modify([FromRoute] int homeworkId, [FromBody] ModifyHomeworkDto dto)
+        {
+            await _modifyService.Modify(homeworkId, dto);
+            return Ok();
+        }
+
         [Authorize(Roles = "CourseManager,Admin")]
         [HttpDelete("{courseId}/homeworks/{homeworkId}")]
         public async Task<ActionResult> DeleteChild([FromRoute] int courseId, [FromRoute] int homeworkId)
