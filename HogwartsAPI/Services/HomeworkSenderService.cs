@@ -23,9 +23,17 @@ namespace HogwartsAPI.Services
         {
             var rootPath = Directory.GetCurrentDirectory();
             var filePath = $"{rootPath}/PrivateFiles/Homeworks/{fileName}";
+
             if (!File.Exists(filePath))
             {
                 throw new NotFoundException("File not found");
+            }
+
+            int userId = GetUserIdFromFileName(fileName);
+
+            if (userId != _userContext.UserId && _userContext.UserRole != "CourseManager" && _userContext.UserRole != "Admin")
+            {
+                throw new ForbidException("You can't see homeworks results that aren't yours");
             }
 
             var contentProvider = new FileExtensionContentTypeProvider();
@@ -82,11 +90,9 @@ namespace HogwartsAPI.Services
                 throw new NotFoundException("File not found");
             }
 
-            int startIdIndex = fileName.LastIndexOf("-") + 1;
-            int lastIdIndex = fileName.IndexOf(".");
-            int userId = int.Parse(fileName.Substring(startIdIndex, lastIdIndex - startIdIndex));
+            int userId = GetUserIdFromFileName(fileName);
 
-            if (userId != _userContext.UserId)
+            if (userId != _userContext.UserId && _userContext.UserRole != "CourseManager" && _userContext.UserRole != "Admin")
             {
                 throw new ForbidException("You can't delete homework result that you didn't create");
             }
@@ -138,6 +144,14 @@ namespace HogwartsAPI.Services
             {
                 gfx.DrawString(text, textFont, XBrushes.Black, rect, format);
             }
+        }
+
+        private int GetUserIdFromFileName(string fileName)
+        {
+            int startIdIndex = fileName.LastIndexOf("-") + 1;
+            int lastIdIndex = fileName.IndexOf(".");
+            int userId = int.Parse(fileName.Substring(startIdIndex, lastIdIndex - startIdIndex));
+            return userId;
         }
 
     }
