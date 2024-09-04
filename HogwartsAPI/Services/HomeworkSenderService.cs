@@ -13,9 +13,11 @@ namespace HogwartsAPI.Services
     public class HomeworkSenderService : IHomeworkFileService<HomeworkResultDto>
     {
         private readonly HogwartDbContext _context;
-        public HomeworkSenderService(HogwartDbContext context)
+        private readonly IUserContextService _userContext;
+        public HomeworkSenderService(HogwartDbContext context, IUserContextService userContext)
         {
             _context = context;
+            _userContext = userContext;
         }
         public async Task<FileDto> GetFile(string fileName)
         {
@@ -42,22 +44,26 @@ namespace HogwartsAPI.Services
             XFont font = new XFont("Verdana", 16);
             XFont fontBold = new XFont("Verdana", 16, XFontStyle.Bold);
             double margin = 30;
-            double yPos = margin;
+            double yPos = margin + 50;
             double lineHeight = font.GetHeight();
 
-            gfx.DrawString($"{dto.SendDate.ToShortDateString()}", font, XBrushes.Black, new XRect(0, 0, page.Width, page.Height), XStringFormats.TopLeft);
-            gfx.DrawString($"{dto.FullName}", font, XBrushes.Black, new XRect(0, 0, page.Width, page.Height), XStringFormats.TopRight);
+            gfx.DrawString($"{dto.SendDate.ToShortDateString()}", font, XBrushes.Black, new XRect(10, 10, page.Width, page.Height), XStringFormats.TopLeft);
+            gfx.DrawString($"{dto.FullName}", font, XBrushes.Black, new XRect(-10, 10, page.Width, page.Height), XStringFormats.TopRight);
+            gfx.DrawString($"{homework.Course.Name}", font, XBrushes.Black, new XRect(0, 10, page.Width, page.Height), XStringFormats.TopCenter);
+
+            DrawWrappedText($"homework: {homework.Description}", font, margin, yPos, page.Width - 2 * margin, lineHeight, page, gfx, XStringFormats.TopLeft);
+            yPos += lineHeight * Math.Ceiling(gfx.MeasureString(homework.Description, font).Width / (page.Width - 2 * margin)) + 40;
 
             DrawWrappedText($"{dto.Title}", fontBold, margin, yPos, page.Width - 2 * margin, lineHeight, page, gfx, XStringFormats.TopCenter);
-            yPos += lineHeight * Math.Ceiling(gfx.MeasureString(homework.Description, font).Width / (page.Width - 2 * margin)) + 20;
+            yPos += lineHeight + 20;
+
 
             DrawWrappedText($"{dto.Content}", font, margin, yPos, page.Width - 2 * margin, lineHeight, page, gfx, XStringFormats.TopLeft);
             yPos += lineHeight;
 
-            gfx.DrawString($"homework: {homework.Description}  -  {homework.Course.Name}", font, XBrushes.Black, new XRect(50, -50, page.Width, page.Height), XStringFormats.BottomLeft);
 
             var rootPath = Directory.GetCurrentDirectory();
-            var fullPath = $"{rootPath}/PrivateFiles/Homeworks/homework-{homeworkId}-{dto.FullName}.pdf";
+            var fullPath = $"{rootPath}/PrivateFiles/Homeworks/homework-{homeworkId}-{dto.FullName}-{_userContext.UserId}.pdf";
             using (var stream = new FileStream(fullPath, FileMode.Create))
             {
                 document.Save(stream);
@@ -74,6 +80,15 @@ namespace HogwartsAPI.Services
             if (!File.Exists(filePath))
             {
                 throw new NotFoundException("File not found");
+            }
+
+            int startIdIndex = fileName.LastIndexOf("-") + 1;
+            int lastIdIndex = fileName.IndexOf(".");
+            int userId = int.Parse(fileName.Substring(startIdIndex, lastIdIndex - startIdIndex));
+
+            if (userId != _userContext.UserId)
+            {
+                throw new ForbidException("You can't delete homework result that you didn't create");
             }
 
             File.Delete(filePath);

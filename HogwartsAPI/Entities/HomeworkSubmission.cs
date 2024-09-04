@@ -11,7 +11,7 @@ namespace HogwartsAPI.Entities
         public int StudentId { get; set; }
         public DateTime SubmissionDate { get; set; }
         public int Grade { get; set; }
-        public string? feedback { get; set; }
+        public string? Feedback { get; set; }
         public virtual User? CreatedBy { get; set; }
         public int? CreatedById { get; set; }
     }
