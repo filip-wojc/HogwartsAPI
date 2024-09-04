@@ -33,7 +33,8 @@ namespace HogwartsAPI
                 new HouseModule(),
                 new PetModule(),
                 new TeacherModule(),
-                new HomeworkModule()
+                new HomeworkModule(),
+                new HomeworkSubmissionModule()
             };
 
             foreach (var module in modules)

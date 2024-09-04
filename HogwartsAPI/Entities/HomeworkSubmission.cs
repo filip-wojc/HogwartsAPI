@@ -9,7 +9,7 @@ namespace HogwartsAPI.Entities
         public int HomeworkId { get; set; }
         public Student? Student { get; set; }
         public int StudentId { get; set; }
-        public DateTime SubmissionDate { get; set; }
+        public DateTime SubmissionDate { get; set; } = DateTime.Now;
         public int Grade { get; set; }
         public string? Feedback { get; set; }
         public virtual User? CreatedBy { get; set; }
