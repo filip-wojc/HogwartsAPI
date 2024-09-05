@@ -12,6 +12,7 @@ namespace HogwartsAPI.Authorization
             services.AddScoped<IAuthorizationHandler, ResourceOperationRequirementHandler<Pet>>();
             services.AddScoped<IAuthorizationHandler, ResourceOperationRequirementHandler<Course>>();
             services.AddScoped<IAuthorizationHandler, ResourceOperationRequirementHandler<Homework>>();
+            services.AddScoped<IAuthorizationHandler, ResourceOperationRequirementHandler<HomeworkSubmission>>();
         }
     }
 }

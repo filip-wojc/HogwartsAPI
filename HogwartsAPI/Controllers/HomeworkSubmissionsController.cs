@@ -11,12 +11,17 @@ namespace HogwartsAPI.Controllers
     [Route("/api/homework-submissions")]
     public class HomeworkSubmissionsController : ControllerBase
     {
-        private IManyToManyRelationGetService<Student, HomeworkSubmissionDto> _getService;
-        private IAddEntitiesService<CreateHomeworkSubmissionDto> _addService;
-        public HomeworkSubmissionsController(IManyToManyRelationGetService<Student, HomeworkSubmissionDto> getService, IAddEntitiesService<CreateHomeworkSubmissionDto> addService)
+        private readonly IManyToManyRelationGetService<Student, HomeworkSubmissionDto> _getService;
+        private readonly IAddEntitiesService<CreateHomeworkSubmissionDto> _addService;
+        private readonly IManyToManyRelationDeleteService<Student, HomeworkSubmission> _deleteService;
+        private readonly IModifyEntitiesService<ModifyHomeworkSubmissionDto> _modifyService;
+        public HomeworkSubmissionsController(IManyToManyRelationGetService<Student, HomeworkSubmissionDto> getService, IAddEntitiesService<CreateHomeworkSubmissionDto> addService,
+            IManyToManyRelationDeleteService<Student, HomeworkSubmission> deleteService, IModifyEntitiesService<ModifyHomeworkSubmissionDto> modifyService)
         {
             _getService = getService;
             _addService = addService;
+            _deleteService = deleteService;
+            _modifyService = modifyService;
         }
         [HttpGet("student/{studentId}")]
         public async Task<ActionResult<IEnumerable<HomeworkSubmissionDto>>> GetAll([FromRoute] int studentId)
@@ -37,6 +42,28 @@ namespace HogwartsAPI.Controllers
         {
             int createdSubmission = await _addService.Create(dto);
             return Created($"/api/homework-submissions/student/{dto.StudentId}/submission/{createdSubmission}", null);
+        }
+
+        [Authorize(Roles = "CourseManager,Admin")]
+        [HttpPut("{homeworkSubmissionId}")]
+        public async Task<ActionResult> Modify([FromRoute] int homeworkSubmissionId, [FromBody] ModifyHomeworkSubmissionDto dto)
+        {
+            await _modifyService.Modify(homeworkSubmissionId, dto);
+            return Ok();
+        }
+
+        [Authorize(Roles = "CourseManager,Admin")]
+        [HttpDelete("student/{studentId}")]
+        public async Task<ActionResult> DeleteAll([FromRoute] int studentId)
+        {
+            await _deleteService.DeleteAllChildren(studentId);
+            return NoContent();
+        }
+        [HttpDelete("student/{studentId}/submission/{homeworkSubmissionId}")]
+        public async Task<ActionResult> Delete([FromRoute] int studentId, [FromRoute] int homeworkSubmissionId)
+        {
+            await _deleteService.DeleteChild(studentId, homeworkSubmissionId);
+            return NoContent();
         }
     }
 }

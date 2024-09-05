@@ -86,16 +86,19 @@ namespace HogwartsAPI.Services
             var course = await GetCourseById(parrentId);
             var homework = await GetHomeworkById(childId);
 
-            if (homework.CreatedById != _userContext.UserId && _userContext.UserRole != "Admin")
-            {
-                throw new ForbidException("You can't delete homework that you didn't create");
-            }
-
-
             if (!course.Homeworks.Contains(homework))
             {
                 throw new BadHttpRequestException("This homework does not exist in this course");
             }
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(_userContext.User, homework,
+                          new ResourceOperationRequirement(ResourceOperation.Delete));
+
+            if (!authorizationResult.Succeeded)
+            {
+                throw new ForbidException("You can't delete a homework you didn't add");
+            }
+
 
             await _context.Homeworks.Where(h => h.Id == childId).ExecuteDeleteAsync();
 

@@ -30,6 +30,11 @@ namespace HogwartsAPI.Dtos.HomeworkSubmissionsValidators
                     {
                         context.AddFailure("StudentId, HomeworkId","Student doesn't have this homework");
                     }
+                    else if(EntityExists(h.StudentId, h.HomeworkId))
+                    {
+                        context.AddFailure("StudentId, HomeworkId", "Submission for this students has been already been created");
+                    }
+                    
                 });
             });
             
@@ -49,6 +54,14 @@ namespace HogwartsAPI.Dtos.HomeworkSubmissionsValidators
             var homework = _context.Homeworks.Include(h => h.Course).FirstOrDefault(h => h.Id == homeworkId);
             var student = _context.Students.Include(s => s.Courses).FirstOrDefault(s => s.Id == studentId);
             if (student.Courses.Any(c => c.Id == homework.Course.Id))
+            {
+                return true;
+            }
+            return false;
+        }
+        private bool EntityExists(int studentId, int homeworkId)
+        {
+            if (_context.HomeworkSubmissions.Any(h => h.HomeworkId == homeworkId && h.StudentId == studentId))
             {
                 return true;
             }
