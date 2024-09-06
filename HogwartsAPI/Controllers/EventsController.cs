@@ -1,40 +1,43 @@
-﻿using HogwartsAPI.Dtos;
+﻿using HogwartsAPI.Dtos.EventsDtos;
 using HogwartsAPI.Dtos.HomeworksDto;
 using HogwartsAPI.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.StaticFiles;
 
 namespace HogwartsAPI.Controllers
 {
     [ApiController]
+    [Route("/api/events")]
     [Authorize]
-    [Route("api/homework-results")]
-    public class HomeworkSenderController : ControllerBase
+    public class EventsController : ControllerBase
     {
-        private readonly IFileService<HomeworkResultDto> _homeworkFileService;
-        public HomeworkSenderController(IFileService<HomeworkResultDto> homeworkFileService)
+        private readonly IFileService<EventUploadDto> _eventsFileService;
+        public EventsController(IFileService<EventUploadDto> eventsFileService)
         {
-            _homeworkFileService = homeworkFileService;
+            _eventsFileService = eventsFileService;
         }
+
         [HttpGet]
         [ResponseCache(Duration = 1200, VaryByQueryKeys = new[] { "fileName" })]
         public async Task<ActionResult> GetFile([FromQuery] string fileName)
         {
-            var fileDto = await _homeworkFileService.GetFile(fileName);
+            var fileDto = await _eventsFileService.GetFile(fileName);
             return File(fileDto.FileContent, fileDto.ContentType, fileDto.FileName);
         }
 
+        [Authorize(Roles = "CourseManager,StudentManager,HouseManager,Admin")]
         [HttpPost]
-        public ActionResult Upload([FromBody] HomeworkResultDto dto)
+        public ActionResult Upload([FromBody] EventUploadDto dto)
         {
-            string fileName = _homeworkFileService.Upload(dto);
+            string fileName = _eventsFileService.Upload(dto);
             return Created(new Uri(fileName, UriKind.Relative), "File Created");
         }
+
+        [Authorize(Roles = "CourseManager,StudentManager,HouseManager,Admin")]
         [HttpDelete]
         public ActionResult DeleteFile([FromQuery] string fileName)
         {
-            _homeworkFileService.DeleteFile(fileName);
+            _eventsFileService.DeleteFile(fileName);
             return NoContent();
         }
     }

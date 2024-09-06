@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <Folder Include="PrivateFiles\Homeworks\" />
+    <Folder Include="PrivateFiles\Events\" />
   </ItemGroup>
 
 </Project>

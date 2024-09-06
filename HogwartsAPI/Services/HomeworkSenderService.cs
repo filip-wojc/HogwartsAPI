@@ -7,10 +7,11 @@ using PdfSharpCore.Pdf;
 using PdfSharpCore.Drawing;
 using Microsoft.EntityFrameworkCore;
 using HogwartsAPI.Entities;
+using HogwartsAPI.Tools;
 
 namespace HogwartsAPI.Services
 {
-    public class HomeworkSenderService : IHomeworkFileService<HomeworkResultDto>
+    public class HomeworkSenderService : IFileService<HomeworkResultDto>
     {
         private readonly HogwartDbContext _context;
         private readonly IUserContextService _userContext;
@@ -42,36 +43,36 @@ namespace HogwartsAPI.Services
             return new FileDto(fileContent, fileName, contentType);
         }
 
-        public async Task<string> Upload(int homeworkId, HomeworkResultDto dto)
+        public string Upload(HomeworkResultDto dto)
         {
-            var homework = await GetHomeworkById(homeworkId);
-
+            var homework = _context.Homeworks.Include(h => h.Course).First(h => h.Id == dto.HomeworkId);
+            
             PdfDocument document = new PdfDocument();
             PdfPage page = document.AddPage();
             XGraphics gfx = XGraphics.FromPdfPage(page);
-            XFont font = new XFont("Verdana", 16);
-            XFont fontBold = new XFont("Verdana", 16, XFontStyle.Bold);
+            XFont font = new XFont("Verdana", 13);
+            XFont fontBold = new XFont("Verdana", 14, XFontStyle.Bold);
             double margin = 30;
             double yPos = margin + 50;
             double lineHeight = font.GetHeight();
 
-            gfx.DrawString($"{dto.SendDate.ToShortDateString()}", font, XBrushes.Black, new XRect(10, 10, page.Width, page.Height), XStringFormats.TopLeft);
-            gfx.DrawString($"{dto.FullName}", font, XBrushes.Black, new XRect(-10, 10, page.Width, page.Height), XStringFormats.TopRight);
-            gfx.DrawString($"{homework.Course.Name}", font, XBrushes.Black, new XRect(0, 10, page.Width, page.Height), XStringFormats.TopCenter);
+            gfx.DrawString(dto.SendDate.ToShortDateString(), font, XBrushes.Black, new XRect(10, 10, page.Width, page.Height), XStringFormats.TopLeft);
+            gfx.DrawString(dto.FullName, font, XBrushes.Black, new XRect(-10, 10, page.Width, page.Height), XStringFormats.TopRight);
+            gfx.DrawString(homework.Course.Name, fontBold, XBrushes.Black, new XRect(0, 10, page.Width, page.Height), XStringFormats.TopCenter);
 
-            DrawWrappedText($"homework: {homework.Description}", font, margin, yPos, page.Width - 2 * margin, lineHeight, page, gfx, XStringFormats.TopLeft);
+            PdfHandler.DrawWrappedText($"homework: {homework.Description}", font, margin, yPos, page.Width - 2 * margin, lineHeight, page, gfx, XStringFormats.TopLeft);
             yPos += lineHeight * Math.Ceiling(gfx.MeasureString(homework.Description, font).Width / (page.Width - 2 * margin)) + 40;
 
-            DrawWrappedText($"{dto.Title}", fontBold, margin, yPos, page.Width - 2 * margin, lineHeight, page, gfx, XStringFormats.TopCenter);
+            PdfHandler.DrawWrappedText(dto.Title, fontBold, margin, yPos, page.Width - 2 * margin, lineHeight, page, gfx, XStringFormats.TopCenter);
             yPos += lineHeight + 20;
 
 
-            DrawWrappedText($"{dto.Content}", font, margin, yPos, page.Width - 2 * margin, lineHeight, page, gfx, XStringFormats.TopLeft);
+            PdfHandler.DrawWrappedText(dto.Content, font, margin, yPos, page.Width - 2 * margin, lineHeight, page, gfx, XStringFormats.TopLeft);
             yPos += lineHeight;
 
 
             var rootPath = Directory.GetCurrentDirectory();
-            var fullPath = $"{rootPath}/PrivateFiles/Homeworks/homework-{homeworkId}-{dto.FullName}-{_userContext.UserId}.pdf";
+            var fullPath = $"{rootPath}/PrivateFiles/Homeworks/homework-{dto.HomeworkId}-{dto.FullName}-{_userContext.UserId}.pdf";
             using (var stream = new FileStream(fullPath, FileMode.Create))
             {
                 document.Save(stream);
@@ -98,52 +99,6 @@ namespace HogwartsAPI.Services
             }
 
             File.Delete(filePath);
-        }
-        private async Task<Homework> GetHomeworkById(int homeworkId)
-        {
-            var homework = await _context.Homeworks.Include(h => h.Course).FirstOrDefaultAsync(h => h.Id == homeworkId);
-            if (homework is null)
-            {
-                throw new NotFoundException("Homework not found");
-            }
-            return homework;
-        }
-        private void DrawWrappedText(string text, XFont textFont, double x, double y, double width, double lineHeight, PdfPage page, XGraphics gfx, XStringFormat format)
-        {
-            var rect = new XRect(x, y, width, page.Height);
-
-            var size = gfx.MeasureString(text, textFont);
-            if (size.Width > rect.Width)
-            {
-                var words = text.Split(' ');
-                var line = string.Empty;
-
-                foreach (var word in words)
-                {
-                    var testLine = string.IsNullOrEmpty(line) ? word : $"{line} {word}";
-                    var testSize = gfx.MeasureString(testLine, textFont);
-
-                    if (testSize.Width > rect.Width)
-                    {
-                        gfx.DrawString(line, textFont, XBrushes.Black, new XRect(x, y, rect.Width, rect.Height), format);
-                        y += lineHeight;
-                        line = word;
-                    }
-                    else
-                    {
-                        line = testLine;
-                    }
-                }
-
-                if (!string.IsNullOrEmpty(line))
-                {
-                    gfx.DrawString(line, textFont, XBrushes.Black, new XRect(x, y, rect.Width, rect.Height), format);
-                }
-            }
-            else
-            {
-                gfx.DrawString(text, textFont, XBrushes.Black, rect, format);
-            }
         }
 
         private int GetUserIdFromFileName(string fileName)

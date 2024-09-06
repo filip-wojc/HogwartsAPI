@@ -1,4 +1,4 @@
-﻿namespace HogwartsAPI.Dtos
+﻿namespace HogwartsAPI.Dtos.FileDtos
 {
     public class FileUploadDto
     {
