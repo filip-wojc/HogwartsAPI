@@ -99,6 +99,10 @@ namespace HogwartsAPI.Services
                 throw new ForbidException("You can't delete a homework you didn't add");
             }
 
+            if(homework.Submissions.Any())
+            {
+                throw new BadHttpRequestException("You can't delete homework that has submissions");
+            }
 
             await _context.Homeworks.Where(h => h.Id == childId).ExecuteDeleteAsync();
 
@@ -107,8 +111,24 @@ namespace HogwartsAPI.Services
         public async Task DeleteAllChildren(int parrentId)
         {
             var course = await GetCourseById(parrentId);
-            var homeworksToDelete = _context.Homeworks.Where(h => h.CreatedById == _userContext.UserId && h.CourseId == parrentId);
-            if (!homeworksToDelete.Any() && _userContext.UserRole != "Admin")
+            var homeworksToDelete = _context.Homeworks.Include(h => h.Submissions).Where(h => h.CourseId == parrentId);
+            foreach (var homework in homeworksToDelete)
+            {
+                if (homework.Submissions.Any())
+                {
+                    throw new BadHttpRequestException("You can't delete homeworks that have submissions");
+                }
+            }
+            if (!homeworksToDelete.Any() && _userContext.UserRole == "Admin")
+            {
+                throw new BadHttpRequestException("There are no homeworks that you can delete.");
+            }
+            if (_userContext.UserRole != "Admin")
+            {
+                homeworksToDelete = homeworksToDelete.Where(h => h.CreatedById == _userContext.UserId);
+            }
+                
+            if (!homeworksToDelete.Any())
             {
                 throw new BadHttpRequestException("There are no homeworks that you can delete. You can only delete homeworks that you created");
             }
@@ -128,7 +148,7 @@ namespace HogwartsAPI.Services
 
         private async Task<Homework> GetHomeworkById(int homeworkId)
         {
-            var homework = await _context.Homeworks.Include(h => h.CreatedBy).FirstOrDefaultAsync(h => h.Id == homeworkId);
+            var homework = await _context.Homeworks.Include(h => h.Submissions).FirstOrDefaultAsync(h => h.Id == homeworkId);
             if (homework is null)
             {
                 throw new NotFoundException("Homework not found");

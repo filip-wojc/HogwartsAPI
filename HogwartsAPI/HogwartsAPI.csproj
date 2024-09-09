@@ -25,6 +25,7 @@
   <ItemGroup>
     <Folder Include="PrivateFiles\Homeworks\" />
     <Folder Include="PrivateFiles\Events\" />
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>
