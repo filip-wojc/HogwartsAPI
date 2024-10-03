@@ -28,6 +28,7 @@ namespace HogwartsAPI.Controllers
             _paginationService = paginationService;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PetDto>>> GetAll([FromQuery] PaginateQuery query)
         {
@@ -36,6 +37,7 @@ namespace HogwartsAPI.Controllers
             return Ok(paginatedResult);
         }
 
+        [AllowAnonymous]
         [HttpGet("{petId}")]
         public async Task<ActionResult<PetDto>> Get([FromRoute] int petId)
         {

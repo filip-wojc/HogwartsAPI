@@ -68,7 +68,8 @@ namespace HogwartsAPI.Services
 
         private async Task<House> GetHouseById(int houseId)
         {
-            var house = await _context.Houses.Include(h => h.Students).Include(h => h.Teacher).FirstOrDefaultAsync(h => h.Id == houseId);
+            var house = await _context.Houses.Include(h => h.Students).ThenInclude(s => s.Wand).ThenInclude(w => w.Core)
+                .Include(h => h.Teacher).FirstOrDefaultAsync(h => h.Id == houseId);
             if (house is null)
             {
                 throw new NotFoundException("House not found");

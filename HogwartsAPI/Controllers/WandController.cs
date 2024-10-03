@@ -27,6 +27,7 @@ namespace HogwartsAPI.Controllers
             _paginationService = paginationService;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<WandDto>>> GetAll([FromQuery] PaginateQuery query)
         {
@@ -34,6 +35,7 @@ namespace HogwartsAPI.Controllers
             var paginatedResult = _paginationService.GetPaginatedResult(query, wands);
             return Ok(paginatedResult);
         }
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<ActionResult<WandDto>> Get([FromRoute] int id)
         {
